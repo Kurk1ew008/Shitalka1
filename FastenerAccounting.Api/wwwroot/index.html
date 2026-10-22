@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Бухгалтерия крепежа</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 50px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            color: black;
+            background-color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+
+        }
+
+            button:hover {
+                background-color: #218838;
+            }
+
+        .hidden {
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 id="pageTitle">Вход в систему</h2>
+
+        <!-- Форма входа -->
+        <div id="loginSection">
+            <input type="email" id="email" placeholder="Email (admin@test.ru)" value="admin@test.ru">
+            <input type="password" id="password" placeholder="Пароль (123)" value="123">
+            <button onclick="login()">Войти</button>
+        </div>
+
+        <!-- Склад -->
+        <div id="mainSection" class="hidden">
+            <p>Вы вошли как: <b id="userEmail"></b> <button style="width:auto; padding: 5px 10px; margin:0;" onclick="logout()">Выйти</button></p>
+            <hr>
+            <h3>Добавить товар (Крепёж)</h3>
+            <input type="text" id="prodName" placeholder="Название (например, Болт М8)">
+            <input type="number" id="prodPrice" placeholder="Цена (например, 5.50)">
+            <button onclick="addProduct()">Добавить на склад</button>
+
+            <h3>Товары на складе</h3>
+            <table id="productsTable">
+                <thead><tr><th>ID</th><th>Название</th><th>Цена</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+    const API = '/api'; // Обращаемся к нашему же серверу
+    let token = localStorage.getItem('token');
+
+    if (token) { showMain(); }
+
+    async function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const res = await fetch(`${API}/Auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            token = data.token;
+            localStorage.setItem('token', token);
+            showMain();
+        } else {
+            alert('Неверный логин или пароль!');
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        location.reload();
+    }
+
+    function showMain() {
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('mainSection').classList.remove('hidden');
+        document.getElementById('pageTitle').innerText = "Панель управления складом";
+        loadProducts();
+    }
+
+    async function loadProducts() {
+        const res = await fetch(`${API}/Products`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const products = await res.json();
+            const tbody = document.querySelector('#productsTable tbody');
+            tbody.innerHTML = '';
+            products.forEach(p => {
+                tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.price} ₽</td></tr>`;
+            });
+        }
+    }
+
+    async function addProduct() {
+        const name = document.getElementById('prodName').value;
+        const price = parseFloat(document.getElementById('prodPrice').value);
+
+        const res = await fetch(`${API}/Products`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ sku: "SKU-" + Date.now(), name: name, category: "Крепеж", unit: "шт", price: price })
+        });
+
+        if (res.ok) {
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
+            loadProducts(); // Обновить таблицу
+        } else {
+            alert('Ошибка при добавлении');
+        }
+    }
+    </script>
+</body>
+</html>

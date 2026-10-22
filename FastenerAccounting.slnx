@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="FastenerAccounting.Api/FastenerAccounting.Api.csproj" />
+  <Project Path="FastenerAccounting.Tests/FastenerAccounting.Tests.csproj" />
+</Solution>

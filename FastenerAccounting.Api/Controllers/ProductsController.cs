@@ -20,7 +20,7 @@ public class ProductsController : ControllerBase
         if (await _db.Products.AnyAsync(p => p.Sku == product.Sku))
             return BadRequest("SKU exists");
         _db.Products.Add(product);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(); 
         return Ok(product);
     }
 
@@ -36,5 +36,19 @@ public class ProductsController : ControllerBase
         _db.Products.Remove(product);
         await _db.SaveChangesAsync();
         return Ok();
+    }
+    public record ResetPasswordDto(string Email, string NewPassword);
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+        if (user == null)
+            return BadRequest("Пользователь с таким Email не найден.");
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Пароль успешно изменен." });
     }
 }

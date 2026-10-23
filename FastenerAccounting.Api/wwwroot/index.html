@@ -143,15 +143,28 @@
 </head>
 <body>
 
-    <div class="container">  
+    <div class="container">
         <h2 id="pageTitle">Вход в систему</h2>
 
-        
+
         <div id="loginSection">
-            <input type="email" id="email" placeholder="Email (admin)" value="admin">
+            <input type="email" id="email" placeholder="Email (admin@test.ru)" value="admin@test.ru">
             <input type="password" id="password" placeholder="Пароль (123)" value="123">
             <button class="btn-green" onclick="login()">Войти</button>
-            <button class="btn-green" style="background-color: #007bff;" onclick="register()">Зарегистрироваться</button>
+
+            <!-- Ссылка на восстановление -->
+            <div style="text-align: center; margin-top: 10px;">
+                <a href="#" onclick="showResetForm()" style="color: #007bff; text-decoration: none;">Забыли пароль?</a>
+            </div>
+        </div>
+
+        <!-- Форма восстановления пароля (скрыта по умолчанию) -->
+        <div id="resetSection" class="hidden">
+            <p style="color: #666; margin-bottom: 15px;">Введите ваш Email и новый пароль.</p>
+            <input type="email" id="resetEmail" placeholder="Ваш Email">
+            <input type="password" id="resetPassword" placeholder="Новый пароль">
+            <button class="btn-green" onclick="resetPassword()">Сменить пароль</button>
+            <button class="btn-logout" style="width: 100%; margin-top: 10px; background-color: #6c757d;" onclick="hideResetForm()">Назад</button>
         </div>
 
         <!-- Панель управления -->

@@ -307,6 +307,36 @@ async function register() {
         alert('Ошибка: возможно, такой Email уже существует.');
     }
 }
+function showResetForm() {
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('resetSection').classList.remove('hidden');
+}
+
+function hideResetForm() {
+    document.getElementById('resetSection').classList.add('hidden');
+    document.getElementById('loginSection').classList.remove('hidden');
+}
+
+async function resetPassword() {
+    const email = document.getElementById('resetEmail').value;
+    const newPassword = document.getElementById('resetPassword').value;
+
+    if (!email || !newPassword) return alert('Заполните все поля!');
+
+    const res = await fetch(`${API}/Auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, newPassword: newPassword })
+    });
+
+    if (res.ok) {
+        alert('Пароль успешно изменен! Теперь войдите с новым паролем.');
+        hideResetForm();
+    } else {
+        const error = await res.text();
+        alert('Ошибка: ' + error);
+    }
+}
     </script>
 </body>
 </html>

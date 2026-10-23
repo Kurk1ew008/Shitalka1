@@ -4,64 +4,140 @@
     <meta charset="UTF-8">
     <title>Бухгалтерия крепежа</title>
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            padding: 50px;
+            background-color: #e9ecef;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
         }
 
         .container {
-            max-width: 600px;
-            margin: auto;
+            width: 100%;
+            max-width: 800px;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
 
+        h2, h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        /* Поля ввода */
         input {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            box-sizing: border-box;
-            color: black;
-            background-color: white;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            color: #333;
+            background-color: #ffffff !important;
+            font-size: 16px;
+            transition: 0.3s;
         }
+        
 
+        input:focus {
+            border-color: #28a745;
+            outline: none;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+            background-color: #ffffff !important;
+        }
+            
+
+        /* Кнопки */
         button {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            box-sizing: border-box;
-            background-color: #28a745;
-            color: white; 
+            padding: 12px 20px;
             border: none;
+            border-radius: 6px;
             cursor: pointer;
-
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
         }
 
-            button:hover {
+        .btn-green {
+            background-color: #28a745;
+            color: white;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+            .btn-green:hover {
                 background-color: #218838;
+                box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
             }
+
+        .btn-logout {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+            .btn-logout:hover {
+                background-color: #c82333;
+            }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+
+            .btn-delete:hover {
+                background-color: #c82333;
+            }
+
+        /* Таблица */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f1f3f5;
+        }
 
         .hidden {
             display: none;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #28a745;
         }
     </style>
 </head>
@@ -72,101 +148,152 @@
 
         <!-- Форма входа -->
         <div id="loginSection">
-            <input type="email" id="email" placeholder="Email (admin@test.ru)" value="admin@test.ru">
+            <input type="email" id="email" placeholder="Email (admin)" value="admin">
             <input type="password" id="password" placeholder="Пароль (123)" value="123">
-            <button onclick="login()">Войти</button>
+            <button class="btn-green" onclick="login()">Войти</button>
+            <button class="btn-green" style="background-color: #007bff;" onclick="register()">Зарегистрироваться</button>
         </div>
 
-        <!-- Склад -->
+        <!-- Панель управления -->
         <div id="mainSection" class="hidden">
-            <p>Вы вошли как: <b id="userEmail"></b> <button style="width:auto; padding: 5px 10px; margin:0;" onclick="logout()">Выйти</button></p>
-            <hr>
+            <div class="user-info">
+                <span>Вы вошли как: <b id="userEmail"></b></span>
+                <button class="btn-logout" onclick="logout()">Выйти</button>
+            </div>
+
             <h3>Добавить товар (Крепёж)</h3>
             <input type="text" id="prodName" placeholder="Название (например, Болт М8)">
             <input type="number" id="prodPrice" placeholder="Цена (например, 5.50)">
-            <button onclick="addProduct()">Добавить на склад</button>
+            <button class="btn-green" onclick="addProduct()">Добавить на склад</button>
 
             <h3>Товары на складе</h3>
             <table id="productsTable">
-                <thead><tr><th>ID</th><th>Название</th><th>Цена</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Цена</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
                 <tbody></tbody>
             </table>
         </div>
     </div>
 
     <script>
-    const API = '/api'; // Обращаемся к нашему же серверу
-    let token = localStorage.getItem('token');
+            const API = '/api';
+            let token = localStorage.getItem('token');
 
-    if (token) { showMain(); }
+            if (token) { showMain(); }
 
-    async function login() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+            async function login() {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
 
-        const res = await fetch(`${API}/Auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
+                const res = await fetch(`${API}/Auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
 
-        if (res.ok) {
-            const data = await res.json();
-            token = data.token;
-            localStorage.setItem('token', token); //так надо 
-            showMain();
-        } else {
-            alert('Неверный логин или пароль!');
-        }
+                if (res.ok) {
+                    const data = await res.json();
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    document.getElementById('userEmail').innerText = email;
+                    showMain();
+                } else {
+                    alert('Неверный логин или пароль!');
+                }
+            }
+
+            function logout() {
+                localStorage.removeItem('token');
+                location.reload();
+            }
+
+            function showMain() {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('mainSection').classList.remove('hidden');
+                document.getElementById('pageTitle').innerText = "Панель управления складом";
+                loadProducts();
+            }
+
+            async function loadProducts() {
+                const res = await fetch(`${API}/Products`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const products = await res.json();
+                    const tbody = document.querySelector('#productsTable tbody');
+                    tbody.innerHTML = '';
+                    products.forEach(p => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.name}</td>
+                                <td>${p.price} ₽</td>
+                                <td><button class="btn-delete" onclick="deleteProduct(${p.id})">Удалить</button></td>
+                            </tr>`;
+                    });
+                }
+            }
+
+            async function addProduct() {
+                const name = document.getElementById('prodName').value;
+                const price = parseFloat(document.getElementById('prodPrice').value);
+
+                if(!name || !price) return alert('Заполните все поля!');
+
+                const res = await fetch(`${API}/Products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ sku: "SKU-" + Date.now(), name: name, category: "Крепеж", unit: "шт", price: price })
+                });
+
+                if (res.ok) {
+                    document.getElementById('prodName').value = '';
+                    document.getElementById('prodPrice').value = '';
+                    loadProducts();
+                } else {
+                    alert('Ошибка при добавлении');
+                }
+            }
+
+            async function deleteProduct(id) {
+                if(!confirm('Вы уверены, что хотите удалить этот товар?')) return;
+
+                const res = await fetch(`${API}/Products/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    loadProducts(); // Обновить таблицу
+                } else {
+                    alert('Ошибка при удалении');
+                }
+}
+async function register() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const res = await fetch(`${API}/Auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password, fullName: "Новый сотрудник" })
+    });
+
+    if (res.ok) {
+        alert('Пользователь успешно создан! Теперь нажмите "Войти".');
+    } else {
+        alert('Ошибка: возможно, такой Email уже существует.');
     }
-
-    function logout() {
-        localStorage.removeItem('token');
-        location.reload();
-    }
-
-    function showMain() {
-        document.getElementById('loginSection').classList.add('hidden');
-        document.getElementById('mainSection').classList.remove('hidden');
-        document.getElementById('pageTitle').innerText = "Панель управления складом";
-        loadProducts();
-    }
-
-    async function loadProducts() {
-        const res = await fetch(`${API}/Products`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.ok) {
-            const products = await res.json();
-            const tbody = document.querySelector('#productsTable tbody');
-            tbody.innerHTML = '';
-            products.forEach(p => {
-                tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.price} ₽</td></tr>`;
-            });
-        }
-    }
-
-    async function addProduct() {
-        const name = document.getElementById('prodName').value;
-        const price = parseFloat(document.getElementById('prodPrice').value);
-
-        const res = await fetch(`${API}/Products`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ sku: "SKU-" + Date.now(), name: name, category: "Крепеж", unit: "шт", price: price })
-        });
-
-        if (res.ok) {
-            document.getElementById('prodName').value = '';
-            document.getElementById('prodPrice').value = '';
-            loadProducts(); // Обновить таблицу
-        } else {
-            alert('Ошибка при добавлении');
-        }
-    }
+}
     </script>
 </body>
 </html>
